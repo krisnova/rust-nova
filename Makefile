@@ -28,6 +28,7 @@ executable   ?=  nova
 compile: ## Compile for the local architecture ⚙
 	@echo "Compiling..."
 	@cargo build --release
+	cp -v ./target/release/$(executable) .
 
 install: ## Install the program to /usr/bin 🎉
 	@echo "Installing..."
@@ -42,6 +43,7 @@ clean: ## Clean your artifacts 🧼
 	@echo "Cleaning..."
 	@cargo clean
 	@rm -rvf target/*
+	@rm -rvf $(executable)
 
 #.PHONY: release
 #release: ## Make the binaries for a GitHub release 📦
