@@ -24,3 +24,11 @@ Enabling verbose mode will simply add `Trace` and `Debug` levels to the default 
 |-------------------|----------------|
  | Info, Warn, Error | +Trace, +Debug |
 
+
+# Flags
+
+We prefer flags over environmental variables for runtime configuration.
+
+Flags can be added to the `main.rs` file following the official [clap examples](https://github.com/clap-rs/clap/tree/v2.33.0/examples)
+
+
