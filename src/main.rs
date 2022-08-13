@@ -37,11 +37,13 @@ fn runtime() -> i32 {
     //simple_logger::init_with_env().unwrap();
     // TODO put this behind a flag
 
+    let name = "nova";
+
     // Initialize the program
     let matches = App::new("Nova")
         .version("1.0")
         .author("Kris Nóva <kris@nivenly.com>")
-        .about("My application.")
+        .about(name)
         .arg(Arg::with_name("verbose")
             .short('v')
             .long("verbose")
@@ -63,7 +65,7 @@ fn runtime() -> i32 {
     let formatter = Formatter3164 {
         facility: Facility::LOG_USER,
         hostname: None,
-        process: "nova".into(),
+        process: name.into(),
         pid: 0,
     };
 
