@@ -53,14 +53,6 @@ fn runtime() -> i32 {
             .takes_value(true))
         .get_matches();
 
-    // Simple logger
-    let logger_simple = if matches.is_present("verbose") {
-        // Trace
-        simplelog::SimpleLogger::new(log::LevelFilter::Trace, simplelog::Config::default())
-    }else {
-        // Info
-        simplelog::SimpleLogger::new(log::LevelFilter::Info, simplelog::Config::default())
-    };
 
     let formatter = Formatter3164 {
         facility: Facility::LOG_USER,
@@ -69,8 +61,19 @@ fn runtime() -> i32 {
         pid: 0,
     };
 
-    let logger_syslog = syslog::unix(formatter).unwrap();
-    let _ = multi_log::MultiLogger::init(vec![logger_simple, Box::new(BasicLogger::new(logger_syslog))], log::Level::Info);
+    // Verbose check for BOTH loggers
+     if matches.is_present("verbose") {
+        // Trace
+        let logger_simple = simplelog::SimpleLogger::new(log::LevelFilter::Trace, simplelog::Config::default());
+        let logger_syslog = syslog::unix(formatter).unwrap();
+        let _ = multi_log::MultiLogger::init(vec![logger_simple, Box::new(BasicLogger::new(logger_syslog))], log::Level::Trace);
+     }else {
+        // Info
+         let logger_simple = simplelog::SimpleLogger::new(log::LevelFilter::Info, simplelog::Config::default());
+         let logger_syslog = syslog::unix(formatter).unwrap();
+         let _ = multi_log::MultiLogger::init(vec![logger_simple, Box::new(BasicLogger::new(logger_syslog))], log::Level::Info);
+     };
+
 
     // log::set_boxed_logger(Box::new(BasicLogger::new(logger)))
     //     .map(|()| log::set_max_level(LevelFilter::Info));
