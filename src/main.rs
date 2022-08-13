@@ -14,6 +14,9 @@
  *                                                                           *
 \*===========================================================================*/
 
+extern crate core;
+
+
 use log::*;
 use clap::*;
 use syslog::*;
@@ -55,13 +58,19 @@ fn runtime() -> i32 {
             .takes_value(true))
         .get_matches();
 
-    // Simple logger
+    // The logger will log to stdout and the syslog by default.
+    // We hold the opinion that the program is either "verbose"
+    // or it's not.
+    //
+    // Normal mode: Info, Warn, Error
+    // Verbose mode: Debug, Trace, Info, Warn, Error
     let logger_level = if matches.is_present("verbose") {
         log::Level::Trace
     }else {
         log::Level::Info
     };
 
+    // Syslog formatter
     let formatter = Formatter3164 {
         facility: Facility::LOG_USER,
         hostname: None,
@@ -69,27 +78,17 @@ fn runtime() -> i32 {
         pid: 0,
     };
 
+    // Initialize the logger
     let logger_simple = simplelog::SimpleLogger::new(logger_level.to_level_filter(), simplelog::Config::default());
     let logger_syslog = syslog::unix(formatter).unwrap();
-    let _ = multi_log::MultiLogger::init(vec![logger_simple, Box::new(BasicLogger::new(logger_syslog))], logger_level);
+    let _ = match multi_log::MultiLogger::init(vec![logger_simple, Box::new(BasicLogger::new(logger_syslog))], logger_level){
+        Ok(_) => {},
+        Err(e) => panic!("unable to connect to syslog: {:?}", e)
+    };
 
-    // log::set_boxed_logger(Box::new(BasicLogger::new(logger)))
-    //     .map(|()| log::set_max_level(LevelFilter::Info));
 
-
-    // if let Some(l) = matches.value_of("logger"){
-    //     info!("Initializing logger: {}", l);
-    //     match l {
-    //         "stdout" => {},
-    //         _ => {}
-    //     }
-    // }
-
-    info!("Info logging...");
-    warn!("Warn logging...");
-    debug!("Debug logging...");
-    trace!("Trace logging...");
-    error!("Error logging...");
+    info!("Runtime initialized.");
+    debug!("Debug mode enabled. Logging: TRACE, DEBUG");
 
     return EXIT_OKAY;
 }
