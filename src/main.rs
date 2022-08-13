@@ -16,19 +16,15 @@
 
 extern crate core;
 
-
-use log::*;
 use clap::*;
+use log::*;
+use simplelog::SharedLogger;
 use syslog::*;
-
-
 
 const EXIT_OKAY: i32 = 0;
 //const EXIT_ERROR: i32 = 1;
 
 fn runtime() -> i32 {
-
-
     // Initialize the rust environmental logger
     // which will respect the following env var levels:
     //
@@ -47,15 +43,19 @@ fn runtime() -> i32 {
         .version("1.0")
         .author("Kris Nóva <kris@nivenly.com>")
         .about(name)
-        .arg(Arg::with_name("verbose")
-            .short('v')
-            .long("verbose")
-            .help("Toggle the verbosity bit.") // With <3 from @togglebit
-            .takes_value(false))
-        .arg(Arg::with_name("logger")
-            .short('l')
-            .help("Set the logger.")
-            .takes_value(true))
+        .arg(
+            Arg::with_name("verbose")
+                .short('v')
+                .long("verbose")
+                .help("Toggle the verbosity bit.") // With <3 from @togglebit
+                .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("logger")
+                .short('l')
+                .help("Set the logger.")
+                .takes_value(true),
+        )
         .get_matches();
 
     // The logger will log to stdout and the syslog by default.
@@ -66,7 +66,7 @@ fn runtime() -> i32 {
     // Verbose mode: Debug, Trace, Info, Warn, Error
     let logger_level = if matches.is_present("verbose") {
         log::Level::Trace
-    }else {
+    } else {
         log::Level::Info
     };
 
@@ -79,16 +79,20 @@ fn runtime() -> i32 {
     };
 
     // Initialize the logger
-    let logger_simple = simplelog::SimpleLogger::new(logger_level.to_level_filter(), simplelog::Config::default());
+    let logger_simple =
+        simplelog::SimpleLogger::new(logger_level.to_level_filter(), simplelog::Config::default());
     let logger_syslog = syslog::unix(formatter).unwrap();
-    let _ = match multi_log::MultiLogger::init(vec![logger_simple, Box::new(BasicLogger::new(logger_syslog))], logger_level){
-        Ok(_) => {},
-        Err(e) => panic!("unable to connect to syslog: {:?}", e)
+    let _ = match multi_log::MultiLogger::init(
+        vec![logger_simple, Box::new(BasicLogger::new(logger_syslog))],
+        logger_level,
+    ) {
+        Ok(_) => {}
+        Err(e) => panic!("unable to connect to syslog: {:?}", e),
     };
 
-
-    info!("Runtime initialized.");
-    debug!("Debug mode enabled. Logging: TRACE, DEBUG");
+    // Initialize the program
+    info!("Runtime initialized: {}", name);
+    debug!("Runtime debugging enabled: {}", name);
 
     return EXIT_OKAY;
 }
