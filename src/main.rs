@@ -18,7 +18,6 @@ extern crate core;
 
 use clap::*;
 use log::*;
-use simplelog::SharedLogger;
 use syslog::*;
 
 const EXIT_OKAY: i32 = 0;
