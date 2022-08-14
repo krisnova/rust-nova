@@ -24,17 +24,10 @@ const EXIT_OKAY: i32 = 0;
 //const EXIT_ERROR: i32 = 1;
 
 fn runtime() -> i32 {
-    // Initialize the rust environmental logger
-    // which will respect the following env var levels:
-    //
-    // RUST_LOG=trace
-    // RUST_LOG=info
-    // RUST_LOG=debug
-    // RUST_LOG=error
-    // RUST_LOG=warn
-    //simple_logger::init_with_env().unwrap();
-    // TODO put this behind a flag
+    return EXIT_OKAY;
+}
 
+fn runtime_environment() {
     let name = "nova";
 
     // Initialize the program
@@ -48,12 +41,6 @@ fn runtime() -> i32 {
                 .long("verbose")
                 .help("Toggle the verbosity bit.") // With <3 from @togglebit
                 .takes_value(false),
-        )
-        .arg(
-            Arg::with_name("logger")
-                .short('l')
-                .help("Set the logger.")
-                .takes_value(true),
         )
         .get_matches();
 
@@ -90,13 +77,17 @@ fn runtime() -> i32 {
     };
 
     // Initialize the program
-    info!("Runtime initialized: {}", name);
-    debug!("Runtime debugging enabled: {}", name);
-
-    return EXIT_OKAY;
+    info!("*");
+    info!("*");
+    info!("* Runtime environment initialized: {}", name);
+    info!("*  -> Syslog process name: {}", name);
+    debug!("* Runtime **debugging** enabled: {}", name);
+    info!("*");
+    info!("*");
 }
 
 fn main() {
+    runtime_environment();
     let exit_code = runtime();
     std::process::exit(exit_code);
 }
