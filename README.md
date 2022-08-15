@@ -32,3 +32,27 @@ We prefer flags over environmental variables for runtime configuration.
 Flags can be added to the `main.rs` file following the official [clap examples](https://github.com/clap-rs/clap/tree/v2.33.0/examples)
 
 
+# Clion
+
+I use [clion](https://www.jetbrains.com/clion/) to develop rust. I use a few features: 
+
+### Auto Imports 
+
+This will automatically "fix" my `use` statements in the `2021` edition of Rust.
+
+```
+Editor > General > Auto Import > Rust
+ [X] Import out-of-scope items on completion.
+```
+
+### Auto Formatting 
+
+This will automatically `rustfmt` my code when I save.
+
+```
+Languages and Frameworks > Rust > Rustfmt
+ [X] Run rustfmt on save
+```
+
+
+
